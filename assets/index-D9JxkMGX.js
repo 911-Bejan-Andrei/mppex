@@ -322,10 +322,10 @@ react_production_min.version = "18.3.1";
   react.exports = react_production_min;
 }
 var reactExports = react.exports;
-const index = /* @__PURE__ */ getDefaultExportFromCjs(reactExports);
-const React = /* @__PURE__ */ _mergeNamespaces({
+const React = /* @__PURE__ */ getDefaultExportFromCjs(reactExports);
+const React$1 = /* @__PURE__ */ _mergeNamespaces({
   __proto__: null,
-  default: index
+  default: React
 }, [reactExports]);
 /**
  * @license React
@@ -7101,11 +7101,11 @@ function warning(cond, message) {
 function createKey() {
   return Math.random().toString(36).substr(2, 8);
 }
-function getHistoryState(location, index2) {
+function getHistoryState(location, index) {
   return {
     usr: location.state,
     key: location.key,
-    idx: index2
+    idx: index
   };
 }
 function createLocation(current, to, state, key) {
@@ -7166,11 +7166,11 @@ function getUrlBasedHistory(getLocation, createHref, validateLocation, options) 
   let globalHistory = window2.history;
   let action = Action.Pop;
   let listener = null;
-  let index2 = getIndex();
-  if (index2 == null) {
-    index2 = 0;
+  let index = getIndex();
+  if (index == null) {
+    index = 0;
     globalHistory.replaceState(_extends$1({}, globalHistory.state, {
-      idx: index2
+      idx: index
     }), "");
   }
   function getIndex() {
@@ -7182,8 +7182,8 @@ function getUrlBasedHistory(getLocation, createHref, validateLocation, options) 
   function handlePop() {
     action = Action.Pop;
     let nextIndex = getIndex();
-    let delta = nextIndex == null ? null : nextIndex - index2;
-    index2 = nextIndex;
+    let delta = nextIndex == null ? null : nextIndex - index;
+    index = nextIndex;
     if (listener) {
       listener({
         action,
@@ -7195,8 +7195,8 @@ function getUrlBasedHistory(getLocation, createHref, validateLocation, options) 
   function push(to, state) {
     action = Action.Push;
     let location = createLocation(history.location, to, state);
-    index2 = getIndex() + 1;
-    let historyState = getHistoryState(location, index2);
+    index = getIndex() + 1;
+    let historyState = getHistoryState(location, index);
     let url = history.createHref(location);
     try {
       globalHistory.pushState(historyState, "", url);
@@ -7217,8 +7217,8 @@ function getUrlBasedHistory(getLocation, createHref, validateLocation, options) 
   function replace(to, state) {
     action = Action.Replace;
     let location = createLocation(history.location, to, state);
-    index2 = getIndex();
-    let historyState = getHistoryState(location, index2);
+    index = getIndex();
+    let historyState = getHistoryState(location, index);
     let url = history.createHref(location);
     globalHistory.replaceState(historyState, "", url);
     if (v5Compat && listener) {
@@ -7309,11 +7309,11 @@ function flattenRoutes(routes, branches, parentsMeta, parentPath) {
   if (parentPath === void 0) {
     parentPath = "";
   }
-  let flattenRoute = (route, index2, relativePath) => {
+  let flattenRoute = (route, index, relativePath) => {
     let meta = {
       relativePath: relativePath === void 0 ? route.path || "" : relativePath,
       caseSensitive: route.caseSensitive === true,
-      childrenIndex: index2,
+      childrenIndex: index,
       route
     };
     if (meta.relativePath.startsWith("/")) {
@@ -7340,13 +7340,13 @@ function flattenRoutes(routes, branches, parentsMeta, parentPath) {
       routesMeta
     });
   };
-  routes.forEach((route, index2) => {
+  routes.forEach((route, index) => {
     var _route$path;
     if (route.path === "" || !((_route$path = route.path) != null && _route$path.includes("?"))) {
-      flattenRoute(route, index2);
+      flattenRoute(route, index);
     } else {
       for (let exploded of explodeOptionalSegments(route.path)) {
-        flattenRoute(route, index2, exploded);
+        flattenRoute(route, index, exploded);
       }
     }
   });
@@ -7379,13 +7379,13 @@ const emptySegmentValue = 1;
 const staticSegmentValue = 10;
 const splatPenalty = -2;
 const isSplat = (s) => s === "*";
-function computeScore(path, index2) {
+function computeScore(path, index) {
   let segments = path.split("/");
   let initialScore = segments.length;
   if (segments.some(isSplat)) {
     initialScore += splatPenalty;
   }
-  if (index2) {
+  if (index) {
     initialScore += indexRouteValue;
   }
   return segments.filter((s) => !isSplat(s)).reduce((score, segment) => score + (paramRe.test(segment) ? dynamicSegmentValue : segment === "" ? emptySegmentValue : staticSegmentValue), initialScore);
@@ -7450,16 +7450,16 @@ function matchPath(pattern, pathname) {
   let matchedPathname = match[0];
   let pathnameBase = matchedPathname.replace(/(.)\/+$/, "$1");
   let captureGroups = match.slice(1);
-  let params = compiledParams.reduce((memo, _ref, index2) => {
+  let params = compiledParams.reduce((memo, _ref, index) => {
     let {
       paramName,
       isOptional
     } = _ref;
     if (paramName === "*") {
-      let splatValue = captureGroups[index2] || "";
+      let splatValue = captureGroups[index] || "";
       pathnameBase = matchedPathname.slice(0, matchedPathname.length - splatValue.length).replace(/(.)\/+$/, "$1");
     }
-    const value = captureGroups[index2];
+    const value = captureGroups[index];
     if (isOptional && !value) {
       memo[paramName] = void 0;
     } else {
@@ -7763,7 +7763,7 @@ function _renderMatches(matches, parentMatches, dataRouterState, future) {
       }
     }
   }
-  return renderedMatches.reduceRight((outlet, match, index2) => {
+  return renderedMatches.reduceRight((outlet, match, index) => {
     let error;
     let shouldRenderHydrateFallback = false;
     let errorElement = null;
@@ -7772,16 +7772,16 @@ function _renderMatches(matches, parentMatches, dataRouterState, future) {
       error = errors && match.route.id ? errors[match.route.id] : void 0;
       errorElement = match.route.errorElement || defaultErrorElement;
       if (renderFallback) {
-        if (fallbackIndex < 0 && index2 === 0) {
+        if (fallbackIndex < 0 && index === 0) {
           shouldRenderHydrateFallback = true;
           hydrateFallbackElement = null;
-        } else if (fallbackIndex === index2) {
+        } else if (fallbackIndex === index) {
           shouldRenderHydrateFallback = true;
           hydrateFallbackElement = match.route.hydrateFallbackElement || null;
         }
       }
     }
-    let matches2 = parentMatches.concat(renderedMatches.slice(0, index2 + 1));
+    let matches2 = parentMatches.concat(renderedMatches.slice(0, index + 1));
     let getChildren = () => {
       let children;
       if (error) {
@@ -7805,7 +7805,7 @@ function _renderMatches(matches, parentMatches, dataRouterState, future) {
         children
       });
     };
-    return dataRouterState && (match.route.ErrorBoundary || match.route.errorElement || index2 === 0) ? /* @__PURE__ */ reactExports.createElement(RenderErrorBoundary, {
+    return dataRouterState && (match.route.ErrorBoundary || match.route.errorElement || index === 0) ? /* @__PURE__ */ reactExports.createElement(RenderErrorBoundary, {
       location: dataRouterState.location,
       revalidation: dataRouterState.revalidation,
       component: errorElement,
@@ -7931,11 +7931,11 @@ function createRoutesFromChildren(children, parentPath) {
     parentPath = [];
   }
   let routes = [];
-  reactExports.Children.forEach(children, (element, index2) => {
+  reactExports.Children.forEach(children, (element, index) => {
     if (!/* @__PURE__ */ reactExports.isValidElement(element)) {
       return;
     }
-    let treePath = [...parentPath, index2];
+    let treePath = [...parentPath, index];
     if (element.type === reactExports.Fragment) {
       routes.push.apply(routes, createRoutesFromChildren(element.props.children, treePath));
       return;
@@ -7981,7 +7981,7 @@ try {
 } catch (e) {
 }
 const START_TRANSITION = "startTransition";
-const startTransitionImpl = React[START_TRANSITION];
+const startTransitionImpl = React$1[START_TRANSITION];
 function BrowserRouter(_ref4) {
   let {
     basename,
@@ -8522,10 +8522,10 @@ function toFormData(obj, formData, options) {
         value = JSON.stringify(value);
       } else if (utils$1.isArray(value) && isFlatArray(value) || (utils$1.isFileList(value) || utils$1.endsWith(key, "[]")) && (arr = utils$1.toArray(value))) {
         key = removeBrackets(key);
-        arr.forEach(function each(el2, index2) {
+        arr.forEach(function each(el2, index) {
           !(utils$1.isUndefined(el2) || el2 === null) && formData.append(
             // eslint-disable-next-line no-nested-ternary
-            indexes === true ? renderKey([key], index2, dots) : indexes === null ? key : key + "[]",
+            indexes === true ? renderKey([key], index, dots) : indexes === null ? key : key + "[]",
             convertValue(el2)
           );
         });
@@ -8751,11 +8751,11 @@ function arrayToObject(arr) {
   return obj;
 }
 function formDataToJSON(formData) {
-  function buildPath(path, value, target, index2) {
-    let name = path[index2++];
+  function buildPath(path, value, target, index) {
+    let name = path[index++];
     if (name === "__proto__") return true;
     const isNumericKey = Number.isFinite(+name);
-    const isLast = index2 >= path.length;
+    const isLast = index >= path.length;
     name = !name && utils$1.isArray(target) ? target.length : name;
     if (isLast) {
       if (utils$1.hasOwnProp(target, name)) {
@@ -8768,7 +8768,7 @@ function formDataToJSON(formData) {
     if (!target[name] || !utils$1.isObject(target[name])) {
       target[name] = [];
     }
-    const result = buildPath(path, value, target[name], index2);
+    const result = buildPath(path, value, target[name], index);
     if (result && utils$1.isArray(target[name])) {
       target[name] = arrayToObject(target[name]);
     }
@@ -10198,9 +10198,9 @@ class CancelToken {
     if (!this._listeners) {
       return;
     }
-    const index2 = this._listeners.indexOf(listener);
-    if (index2 !== -1) {
-      this._listeners.splice(index2, 1);
+    const index = this._listeners.indexOf(listener);
+    if (index !== -1) {
+      this._listeners.splice(index, 1);
     }
   }
   /**
@@ -10427,11 +10427,14 @@ function Login() {
     ] })
   ] });
 }
+function PageRoutes() {
+  return /* @__PURE__ */ jsxRuntimeExports.jsx(BrowserRouter, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(Routes, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(Route, { path: "/", element: /* @__PURE__ */ jsxRuntimeExports.jsx(Login, {}) }) }) });
+}
 function App() {
-  return /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "App", children: /* @__PURE__ */ jsxRuntimeExports.jsx(Routes, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(Route, { path: "/", element: /* @__PURE__ */ jsxRuntimeExports.jsx(Login, {}) }) }) });
+  return /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "App", children: /* @__PURE__ */ jsxRuntimeExports.jsx(PageRoutes, {}) });
 }
 const container = document.getElementById("root");
 const root = client.createRoot(container);
 root.render(
-  /* @__PURE__ */ jsxRuntimeExports.jsx(BrowserRouter, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(App, {}) })
+  /* @__PURE__ */ jsxRuntimeExports.jsx(React.StrictMode, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(App, {}) })
 );
