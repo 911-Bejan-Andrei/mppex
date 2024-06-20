@@ -7084,46 +7084,6 @@ function createBrowserHistory(options) {
   }
   return getUrlBasedHistory(createBrowserLocation, createBrowserHref, null, options);
 }
-function createHashHistory(options) {
-  if (options === void 0) {
-    options = {};
-  }
-  function createHashLocation(window2, globalHistory) {
-    let {
-      pathname = "/",
-      search = "",
-      hash = ""
-    } = parsePath(window2.location.hash.substr(1));
-    if (!pathname.startsWith("/") && !pathname.startsWith(".")) {
-      pathname = "/" + pathname;
-    }
-    return createLocation(
-      "",
-      {
-        pathname,
-        search,
-        hash
-      },
-      // state defaults to `null` because `window.history.state` does
-      globalHistory.state && globalHistory.state.usr || null,
-      globalHistory.state && globalHistory.state.key || "default"
-    );
-  }
-  function createHashHref(window2, to) {
-    let base = window2.document.querySelector("base");
-    let href = "";
-    if (base && base.getAttribute("href")) {
-      let url = window2.location.href;
-      let hashIndex = url.indexOf("#");
-      href = hashIndex === -1 ? url : url.slice(0, hashIndex);
-    }
-    return href + "#" + (typeof to === "string" ? to : createPath(to));
-  }
-  function validateHashLocation(location, to) {
-    warning(location.pathname.charAt(0) === "/", "relative pathnames are not supported in hash history.push(" + JSON.stringify(to) + ")");
-  }
-  return getUrlBasedHistory(createHashLocation, createHashHref, validateHashLocation, options);
-}
 function invariant(value, message) {
   if (value === false || value === null || typeof value === "undefined") {
     throw new Error(message);
@@ -7235,7 +7195,6 @@ function getUrlBasedHistory(getLocation, createHref, validateLocation, options) 
   function push(to, state) {
     action = Action.Push;
     let location = createLocation(history.location, to, state);
-    if (validateLocation) validateLocation(location, to);
     index2 = getIndex() + 1;
     let historyState = getHistoryState(location, index2);
     let url = history.createHref(location);
@@ -7258,7 +7217,6 @@ function getUrlBasedHistory(getLocation, createHref, validateLocation, options) 
   function replace(to, state) {
     action = Action.Replace;
     let location = createLocation(history.location, to, state);
-    if (validateLocation) validateLocation(location, to);
     index2 = getIndex();
     let historyState = getHistoryState(location, index2);
     let url = history.createHref(location);
@@ -8034,41 +7992,6 @@ function BrowserRouter(_ref4) {
   let historyRef = reactExports.useRef();
   if (historyRef.current == null) {
     historyRef.current = createBrowserHistory({
-      window: window2,
-      v5Compat: true
-    });
-  }
-  let history = historyRef.current;
-  let [state, setStateImpl] = reactExports.useState({
-    action: history.action,
-    location: history.location
-  });
-  let {
-    v7_startTransition
-  } = future || {};
-  let setState = reactExports.useCallback((newState) => {
-    v7_startTransition && startTransitionImpl ? startTransitionImpl(() => setStateImpl(newState)) : setStateImpl(newState);
-  }, [setStateImpl, v7_startTransition]);
-  reactExports.useLayoutEffect(() => history.listen(setState), [history, setState]);
-  return /* @__PURE__ */ reactExports.createElement(Router, {
-    basename,
-    children,
-    location: state.location,
-    navigationType: state.action,
-    navigator: history,
-    future
-  });
-}
-function HashRouter(_ref5) {
-  let {
-    basename,
-    children,
-    future,
-    window: window2
-  } = _ref5;
-  let historyRef = reactExports.useRef();
-  if (historyRef.current == null) {
-    historyRef.current = createHashHistory({
       window: window2,
       v5Compat: true
     });
@@ -10504,14 +10427,11 @@ function Login() {
     ] })
   ] });
 }
-function PageRoutes() {
-  return /* @__PURE__ */ jsxRuntimeExports.jsx(BrowserRouter, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(Routes, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(Route, { path: "/", element: /* @__PURE__ */ jsxRuntimeExports.jsx(Login, {}) }) }) });
-}
 function App() {
-  return /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "App", children: /* @__PURE__ */ jsxRuntimeExports.jsx(PageRoutes, {}) });
+  return /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "App", children: /* @__PURE__ */ jsxRuntimeExports.jsx(Routes, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(Route, { path: "/", element: /* @__PURE__ */ jsxRuntimeExports.jsx(Login, {}) }) }) });
 }
 const container = document.getElementById("root");
 const root = client.createRoot(container);
 root.render(
-  /* @__PURE__ */ jsxRuntimeExports.jsx(HashRouter, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(App, {}) })
+  /* @__PURE__ */ jsxRuntimeExports.jsx(BrowserRouter, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(App, {}) })
 );
