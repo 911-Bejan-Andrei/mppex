@@ -336,13 +336,13 @@ const React = /* @__PURE__ */ _mergeNamespaces({
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
-var f = reactExports, k = Symbol.for("react.element"), l = Symbol.for("react.fragment"), m = Object.prototype.hasOwnProperty, n = f.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED.ReactCurrentOwner, p$1 = { key: true, ref: true, __self: true, __source: true };
+var f = reactExports, k = Symbol.for("react.element"), l = Symbol.for("react.fragment"), m$1 = Object.prototype.hasOwnProperty, n = f.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED.ReactCurrentOwner, p$1 = { key: true, ref: true, __self: true, __source: true };
 function q(c, a, g) {
   var b, d = {}, e = null, h = null;
   void 0 !== g && (e = "" + g);
   void 0 !== a.key && (e = "" + a.key);
   void 0 !== a.ref && (h = a.ref);
-  for (b in a) m.call(a, b) && !p$1.hasOwnProperty(b) && (d[b] = a[b]);
+  for (b in a) m$1.call(a, b) && !p$1.hasOwnProperty(b) && (d[b] = a[b]);
   if (c && c.defaultProps) for (b in a = c.defaultProps, a) void 0 === d[b] && (d[b] = a[b]);
   return { $$typeof: k, type: c, key: e, ref: h, props: d, _owner: n.current };
 }
@@ -353,6 +353,7 @@ reactJsxRuntime_production_min.jsxs = q;
   jsxRuntime.exports = reactJsxRuntime_production_min;
 }
 var jsxRuntimeExports = jsxRuntime.exports;
+var client = {};
 var reactDom = { exports: {} };
 var reactDom_production_min = {};
 var scheduler = { exports: {} };
@@ -7020,7 +7021,11 @@ function checkDCE() {
   reactDom.exports = reactDom_production_min;
 }
 var reactDomExports = reactDom.exports;
-const ReactDOM = /* @__PURE__ */ getDefaultExportFromCjs(reactDomExports);
+var m = reactDomExports;
+{
+  client.createRoot = m.createRoot;
+  client.hydrateRoot = m.hydrateRoot;
+}
 /**
  * @remix-run/router v1.16.1
  *
@@ -10505,7 +10510,8 @@ function PageRoutes() {
 function App() {
   return /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "App", children: /* @__PURE__ */ jsxRuntimeExports.jsx(PageRoutes, {}) });
 }
-ReactDOM.render(
-  /* @__PURE__ */ jsxRuntimeExports.jsx(HashRouter, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(App, {}) }),
-  document.getElementById("root")
+const container = document.getElementById("root");
+const root = client.createRoot(container);
+root.render(
+  /* @__PURE__ */ jsxRuntimeExports.jsx(HashRouter, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(App, {}) })
 );
